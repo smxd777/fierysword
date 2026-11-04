@@ -1,0 +1,2 @@
+//give @s <fiery-sword>:fiery_sword
+/give @s fiery-sword:fiery_sword

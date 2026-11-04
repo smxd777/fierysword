@@ -1,30 +1,39 @@
 package ru.college.i923v.fierysword;
 
 import net.fabricmc.api.ModInitializer;
-
-import net.minecraft.resources.ResourceLocation;
-
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FierySword implements ModInitializer {
-	public static final String MOD_ID = "fiery-sword";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
+	public static final String MOD_ID = "fiery-sword";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-ModItems.initialize();
-		LOGGER.info("Hellow Geni4!");
-	}
+		LOGGER.info("Инициализация мода Fiery Sword");
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+		ModItems.initialize();
+
+		UseItemCallback.EVENT.register((player, world, hand) -> {
+			ItemStack stack = player.getItemInHand(hand);
+
+			if (!stack.is(ModItems.FIERY_SWORD)) {
+				return InteractionResultHolder.pass(stack);
+			}
+
+			if (!world.isClientSide()) {
+				player.displayClientMessage(
+						Component.literal("Огненный меч пылает в руке!"),
+						true
+				);
+			}
+
+			return InteractionResultHolder.success(stack);
+		});
 	}
 }
